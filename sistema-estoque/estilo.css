@@ -1,0 +1,436 @@
+/* CONTROLE DE ESTOQUE - INTERFACE
+   Este arquivo mexe só na aparência. Os ids, os nomes dos campos e as
+   classes usadas pelos arquivos .js (botao-editar, botao-excluir) continuam
+   iguais, então o cadastro, a listagem e o localStorage não são afetados. */
+
+:root {
+    --tinta: #16302b;
+    --papel: #f2f4f1;
+    --superficie: #ffffff;
+    --linha: #d3dad5;
+    --texto: #1f2a28;
+    --mudo: #5a6965;
+    --alerta: #f4b400;
+    --alerta-escuro: #d99f00;
+    --perigo: #b42318;
+    --raio: 6px;
+    --margem: max(20px, calc((100% - 1080px) / 2));
+    --fonte-titulo: "Bahnschrift", "Arial Narrow", "Segoe UI", system-ui, sans-serif;
+    --fonte-texto: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    font-family: var(--fonte-texto);
+    color: var(--texto);
+    background: var(--papel);
+    line-height: 1.55;
+}
+
+/* CABEÇALHO E NAVEGAÇÃO */
+
+header {
+    position: relative;
+    padding: 28px var(--margem) 36px;
+    color: #ffffff;
+    background: var(--tinta);
+}
+
+/* faixa de sinalização, como a de piso de armazém */
+header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 8px;
+    background: repeating-linear-gradient(
+        -45deg,
+        var(--alerta) 0 10px,
+        var(--tinta) 10px 20px
+    );
+}
+
+header h1 {
+    margin: 0;
+    font-family: var(--fonte-titulo);
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+}
+
+header p {
+    margin: 6px 0 0;
+    color: #c5d3ce;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 0 var(--margem) 0 calc(var(--margem) - 14px);
+    background: var(--superficie);
+    border-bottom: 1px solid var(--linha);
+}
+
+nav a {
+    padding: 14px 14px 11px;
+    color: var(--tinta);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+}
+
+nav a:hover {
+    background: #eef2ef;
+}
+
+nav a[aria-current="page"] {
+    border-bottom-color: var(--alerta);
+}
+
+/* CONTEÚDO */
+
+main {
+    flex: 1;
+    width: min(1080px, 100% - 40px);
+    margin: 32px auto 0;
+}
+
+main > section + section {
+    margin-top: 28px;
+}
+
+main p {
+    max-width: 65ch;
+}
+
+h2 {
+    margin: 0 0 8px;
+    font-family: var(--fonte-titulo);
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--tinta);
+}
+
+/* INDICADORES */
+
+.resumo {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    overflow: hidden;
+    background: var(--superficie);
+    border: 1px solid var(--linha);
+    border-radius: var(--raio);
+}
+
+.indicador {
+    padding: 20px 24px;
+}
+
+.indicador + .indicador {
+    border-left: 1px solid var(--linha);
+}
+
+.indicador h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--mudo);
+}
+
+.indicador p {
+    margin: 4px 0 0;
+    font-family: var(--fonte-titulo);
+    font-size: 2.2rem;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--tinta);
+    font-variant-numeric: tabular-nums;
+}
+
+/* BOTÕES */
+
+.acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.botao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font: 600 1rem var(--fonte-texto);
+    color: var(--tinta);
+    background: var(--alerta);
+    border: 2px solid var(--alerta);
+    border-radius: var(--raio);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.botao:hover {
+    background: var(--alerta-escuro);
+    border-color: var(--alerta-escuro);
+}
+
+.botao-secundario {
+    color: var(--tinta);
+    background: transparent;
+    border-color: var(--tinta);
+}
+
+.botao-secundario:hover {
+    color: #ffffff;
+    background: var(--tinta);
+    border-color: var(--tinta);
+}
+
+a:focus-visible,
+button:focus-visible {
+    outline: 3px solid var(--tinta);
+    outline-offset: 2px;
+}
+
+/* FORMULÁRIO DE CADASTRO */
+
+.formulario {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 18px 16px;
+    max-width: 640px;
+    margin-top: 18px;
+    padding: 28px;
+    background: var(--superficie);
+    border: 1px solid var(--linha);
+    border-radius: var(--raio);
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    grid-column: span 6;
+}
+
+.campo-meio {
+    grid-column: span 3;
+}
+
+.campo label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--tinta);
+}
+
+.campo input {
+    width: 100%;
+    padding: 11px 12px;
+    font: inherit;
+    color: var(--texto);
+    background: #ffffff;
+    border: 1px solid #aeb9b4;
+    border-radius: var(--raio);
+}
+
+.campo input::placeholder {
+    color: #78857f;
+}
+
+.campo input:focus {
+    outline: 2px solid transparent;
+    border-color: var(--tinta);
+    box-shadow: 0 0 0 3px rgba(244, 180, 0, 0.55);
+}
+
+.acoes-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    grid-column: 1 / -1;
+    margin-top: 6px;
+}
+
+/* LISTAGEM */
+
+.card-tabela {
+    overflow: hidden;
+    background: var(--superficie);
+    border: 1px solid var(--linha);
+    border-radius: var(--raio);
+}
+
+.titulo-tabela {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 20px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--linha);
+}
+
+.titulo-tabela h2 {
+    margin: 0;
+}
+
+.titulo-tabela p {
+    margin: 2px 0 0;
+    font-size: 0.95rem;
+    color: var(--mudo);
+}
+
+.tabela-responsiva {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+th {
+    padding: 12px 24px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--tinta);
+    background: #e9eeea;
+    border-bottom: 2px solid var(--tinta);
+    white-space: nowrap;
+}
+
+td {
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--linha);
+}
+
+tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+tbody tr:hover {
+    background: #f6f8f5;
+}
+
+/* quantidade e preço alinhados à direita, ações no canto */
+th:nth-child(3),
+td:nth-child(3),
+th:nth-child(4),
+td:nth-child(4) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+th:last-child,
+td:last-child {
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* mensagem de lista vazia */
+tbody td[colspan] {
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--mudo);
+}
+
+.botao-editar,
+.botao-excluir {
+    padding: 6px 12px;
+    font: 600 0.9rem var(--fonte-texto);
+    background: transparent;
+    border: 1.5px solid;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.botao-editar {
+    margin-right: 4px;
+    color: var(--tinta);
+    border-color: var(--tinta);
+}
+
+.botao-editar:hover {
+    color: #ffffff;
+    background: var(--tinta);
+}
+
+.botao-excluir {
+    color: var(--perigo);
+    border-color: var(--perigo);
+}
+
+.botao-excluir:hover {
+    color: #ffffff;
+    background: var(--perigo);
+}
+
+/* RODAPÉ */
+
+footer {
+    margin-top: 48px;
+    padding: 18px var(--margem);
+    font-size: 0.92rem;
+    color: #c5d3ce;
+    background: var(--tinta);
+}
+
+footer p {
+    margin: 0;
+}
+
+/* TELAS PEQUENAS */
+
+@media (max-width: 640px) {
+    header {
+        padding-bottom: 32px;
+    }
+
+    .resumo {
+        grid-template-columns: 1fr;
+    }
+
+    .indicador + .indicador {
+        border-left: 0;
+        border-top: 1px solid var(--linha);
+    }
+
+    .formulario {
+        padding: 20px;
+    }
+
+    .campo-meio {
+        grid-column: span 6;
+    }
+
+    .titulo-tabela {
+        padding: 16px;
+    }
+
+    th,
+    td {
+        padding: 10px 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}

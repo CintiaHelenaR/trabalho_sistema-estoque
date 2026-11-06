@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Estoque</title>
+    <link rel="stylesheet" href="estilo.css?v=2">
+</head>
+<body>
+    <!--Cabeçalho do site-->
+    <header>
+        <h1>Controle de Estoque</h1>
+        <p>Organize seus produtos de maneira simples e eficiente</p>
+    </header>
+
+    <nav aria-label="Principal">
+        <a href="index.html" aria-current="page">Início</a>
+        <a href="listar.html">Produtos</a>
+        <a href="cadastro.html">Cadastrar produto</a>
+    </nav>
+
+    <!--Conteúdo principal-->
+    <main>
+        <section>
+            <h2>Visão geral</h2>
+            <p>Bem-vindo ao sistema de controle de estoque. Aqui você pode cadastrar, consultar e gerenciar seus produtos.</p>
+        </section>
+
+        <!--Informações do estoque-->
+        <section class="resumo" aria-label="Resumo do estoque">
+            <div class="indicador">
+                <h3>Produtos cadastrados</h3>
+                <p id="totalProdutos">0</p>
+            </div>
+            <div class="indicador">
+                <h3>Produtos disponíveis</h3>
+                <p id="totalUnidades">0</p>
+            </div>
+        </section>
+
+        <!--Ações principais-->
+        <section>
+            <h2>Gerenciar estoque</h2>
+            <div class="acoes">
+                <a href="listar.html" class="botao">Visualizar produtos</a>
+                <a href="cadastro.html" class="botao botao-secundario">Cadastrar produto</a>
+            </div>
+        </section>
+    </main>
+
+    <!--Rodapé-->
+    <footer>
+        <p>Projeto desenvolvido por Cintia, Iago, Maria Eduarda Cruz e Sara.</p>
+    </footer>
+    <script src="resumo_inicio.js"></script>
+</body>
+</html>
